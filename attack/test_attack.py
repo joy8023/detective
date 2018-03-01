@@ -81,16 +81,16 @@ adv_data=[]
 origin_label=[]
 adv_label=[]
 
-samples = 100
-start = 0
+samples = 1000
+start = 1000
 
-filename = 'cifar100start0.pkl'
+filename = 'mnist1000start1000.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
 
-#        data, model =  MNIST(), MNISTModel("models/mnist", sess)
-        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+#        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
 
         attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=0)
 #        attack = CarliniL0(sess, model)
@@ -116,7 +116,7 @@ if __name__ == "__main__":
             adv_data.append(adv[i])
             adv_label.append(model.model.predict(adv[i:i+1]))
 
-            print("Classification:", model.model.predict(adv[i:i+1]))
+#            print("Classification:", model.model.predict(adv[i:i+1]))
 
 #            print("Total distortion:", np.sum((adv[i]-inputs[i])**2)**.5)
 
