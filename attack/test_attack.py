@@ -81,10 +81,10 @@ adv_data=[]
 origin_label=[]
 adv_label=[]
 
-samples = 1000
-start = 1000
+samples = 500
+start = 500
 
-filename = 'cifar1000start1000.pkl'
+filename = 'cifar500start500.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
