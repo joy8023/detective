@@ -85,7 +85,7 @@ samples = 100
 start = 0
 confidence = 10
 
-filename = 'c5mnist1000start0.pkl'
+filename = 'c10mnist100start0.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
