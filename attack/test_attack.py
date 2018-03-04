@@ -83,9 +83,9 @@ adv_label=[]
 
 samples = 100
 start = 0
-confidence = 10
+confidence = 15
 
-filename = 'c10mnist100start0.pkl'
+filename = 'c15mnist100start0.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
