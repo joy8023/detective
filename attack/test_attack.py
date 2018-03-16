@@ -83,10 +83,10 @@ origin_label=[]
 adv_label=[]
 
 samples = 500
-start = 500
-confidence = 0
+start = 0
+confidence = 5
 
-filename = 'newcifar500start500.pkl'
+filename = 'c5new_cifar500start0.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
