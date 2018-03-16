@@ -55,25 +55,26 @@ def generate_data(data, samples, targeted=True, start=0, inception=False):
     """
     inputs = []
     targets = []
+    print('hi')
     for i in range(samples):
         if targeted:
             if inception:
                 seq = random.sample(range(1,1001), 10)
             else:
-                seq = range(data.test_labels.shape[1])
+                seq = range(data.train_labels.shape[1])
 
             for j in seq:
-                if (j == np.argmax(data.test_labels[start+i])) and (inception == False):
+                if (j == np.argmax(data.train_labels[start+i])) and (inception == False):
                     continue
-                inputs.append(data.test_data[start+i])
-                targets.append(np.eye(data.test_labels.shape[1])[j])
+                inputs.append(data.train_data[start+i])
+                targets.append(np.eye(data.train_labels.shape[1])[j])
         else:
             inputs.append(data.test_data[start+i])
             targets.append(data.test_labels[start+i])
 
     inputs = np.array(inputs)
     targets = np.array(targets)
-
+    print('hello')
     return inputs, targets
 
 origin_data=[]
@@ -81,11 +82,11 @@ adv_data=[]
 origin_label=[]
 adv_label=[]
 
-samples = 100
-start = 0
-confidence = 5
+samples = 500
+start = 500
+confidence = 0
 
-filename = 'c5cifar100start0.pkl'
+filename = 'newcifar500start500.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
