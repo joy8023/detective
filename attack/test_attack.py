@@ -84,15 +84,15 @@ adv_label=[]
 
 samples = 500
 start = 0
-confidence = 5
+confidence = 0
 
-filename = 'c5new_cifar500start0.pkl'
+filename = '500start0.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
 
-#        data, model =  MNIST(), MNISTModel("models/mnist", sess)
-        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+#        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
 
         attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=confidence)
 #        attack = CarliniL0(sess, model)
