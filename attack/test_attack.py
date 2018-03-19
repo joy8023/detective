@@ -98,21 +98,24 @@ adv_label = []
 ut_data = []
 ut_label = []
 
-samples = 2
-start = 10
+samples = 100
+start = 0
+confidence = 0
 
-filename = 'test.pkl'
-utfile = 'testut.pkl'
+filename = 'dstl_mnist100start0.pkl'
+utfile = 'ut_'+filename
 
 if __name__ == "__main__":
     with tf.Session() as sess:
 
-        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+#        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+        data, model =  MNIST(), MNISTModel("models/mnist-distilled-100", sess)
 #        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+#        data, model =  CIFAR(), CIFARModel("models/cifar-distilled-100", sess)
         
 #        evaluate(model.model, data.train_data, data.train_labels)
 
-        attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=0)
+        attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=confidence)
 #        attack = CarliniL0(sess, model)
 #        attack = CarliniLi(sess, model)
 
@@ -135,13 +138,13 @@ if __name__ == "__main__":
                 adv_label.append(model.model.predict(adv[i*9+j:i*9+j+1]))
                 dist = np.sum((adv[i*9+j]-inputs[i*9+j])**2)
                 if dist<min:
-                    print(dist)
+#                    print(dist)
                     min = dist
                     idx = j
 
             ut_data.append(adv[i*9+idx])
             ut_label.append(model.model.predict(adv[i*9+idx:i*9+idx+1]))
-            show(adv[i*9+idx])
+#            show(adv[i*9+idx])
 
 '''
         for i in range(len(adv)):
