@@ -27,9 +27,9 @@ class newdata:
         self.adv_label= np.array(al)
 
         print(self.origin_data.shape)
-        print(self.origin_label.shape)
+#        print(self.origin_label.shape)
         print(self.adv_data.shape)
-        print(self.adv_label.shape)
+#        print(self.adv_label.shape)
 
 def show(img):
     """
@@ -42,8 +42,7 @@ def show(img):
     for i in range(28):
         print("".join([remap[int(round(x))] for x in img[i*28:i*28+28]]))
 
-
-def generate_data(data, samples, targeted=True, start=0, inception=False):
+def generate_data(model, data, samples, targeted=True, start=0, inception=False):
     """
     Generate the input data to the attack algorithm.
 
@@ -55,80 +54,114 @@ def generate_data(data, samples, targeted=True, start=0, inception=False):
     """
     inputs = []
     targets = []
-    print('hi')
     for i in range(samples):
-        if targeted:
+        if np.argmax(model.model.predict(data.train_data[start+i:start+i+1])) == np.argmax(data.train_labels[start+i]):
             if inception:
                 seq = random.sample(range(1,1001), 10)
             else:
-                seq = range(data.train_labels.shape[1])
+                seq = range(data.test_labels.shape[1])
 
             for j in seq:
                 if (j == np.argmax(data.train_labels[start+i])) and (inception == False):
                     continue
                 inputs.append(data.train_data[start+i])
                 targets.append(np.eye(data.train_labels.shape[1])[j])
-        else:
-            inputs.append(data.test_data[start+i])
-            targets.append(data.test_labels[start+i])
+#        else:
+#            inputs.append(data.test_data[start+i])
+#            targets.append(data.test_labels[start+i])
 
     inputs = np.array(inputs)
     targets = np.array(targets)
-    print('hello')
+    print(inputs.shape[0]/9)
+
     return inputs, targets
 
-origin_data=[]
-adv_data=[]
-origin_label=[]
-adv_label=[]
+def evaluate(model, data, label):
+    predict = model.predict(data)
+    pl = np.argmax(predict,axis = 1) 
+    l = np.argmax(label,axis = 1)
+    error = 0
+    num = pl.shape[0]
+    for i in range(num):
+        if pl[i] != l[i]:
+            error +=1
 
-samples = 100
-start = 0
-confidence = 0
+    accuracy = 1 - float(error)/num
+    print('accuracy:',accuracy)
 
-filename = 'l0cifar_100start0.pkl'
+    return accuracy
+
+origin_data = []
+adv_data = []
+origin_label = []
+adv_label = []
+ut_data = []
+ut_label = []
+
+samples = 2
+start = 10
+
+filename = 'test.pkl'
+utfile = 'testut.pkl'
 
 if __name__ == "__main__":
     with tf.Session() as sess:
 
-#        data, model =  MNIST(), MNISTModel("models/mnist", sess)
-        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+#        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+        
+#        evaluate(model.model, data.train_data, data.train_labels)
 
-#        attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=confidence)
-        attack = CarliniL0(sess, model)
+        attack = CarliniL2(sess, model, batch_size=9, max_iterations=1000, confidence=0)
+#        attack = CarliniL0(sess, model)
 #        attack = CarliniLi(sess, model)
-        inputs, targets = generate_data(data, samples=samples, targeted=True,
+
+        inputs, targets = generate_data(model, data, samples=samples, targeted=True,
                                         start=start, inception=False)
+
         timestart = time.time()
         adv = attack.attack(inputs, targets)
         timeend = time.time()
 
         print("Took",timeend-timestart,"seconds to run",len(inputs),"samples.")
 
-        for i in range(samples):
+        for i in range(int(len(adv)/9)):
             origin_data.append(inputs[i*9])
             origin_label.append(model.model.predict(inputs[i*9:i*9+1]))
-#            print(model.model.predict(inputs[i*9:i*9+1]))
+            min = np.sum((adv[i*9]-inputs[i*9])**2)
+            idx=0
+            for j in range(9):
+                adv_data.append(adv[i*9+j])
+                adv_label.append(model.model.predict(adv[i*9+j:i*9+j+1]))
+                dist = np.sum((adv[i*9+j]-inputs[i*9+j])**2)
+                if dist<min:
+                    print(dist)
+                    min = dist
+                    idx = j
 
+            ut_data.append(adv[i*9+idx])
+            ut_label.append(model.model.predict(adv[i*9+idx:i*9+idx+1]))
+            show(adv[i*9+idx])
+
+'''
         for i in range(len(adv)):
 #            print("Valid:")
 #            show(inputs[i])
 #            print("Adversarial:")
 #            show(adv[i])
-            adv_data.append(adv[i])
-            adv_label.append(model.model.predict(adv[i:i+1]))
 
 #            print("Classification:", model.model.predict(adv[i:i+1]))
-
 #            print("Total distortion:", np.sum((adv[i]-inputs[i])**2)**.5)
-
+'''
 new_data=newdata(origin_data, origin_label, adv_data, adv_label )
+new_ut = newdata(origin_data, origin_label, ut_data, ut_label)
+#print(ut_label)
 
 f = open(filename,'wb')
 pickle.dump(new_data,f)
 f.close
 
-f = open(filename,'rb')
-new_data11=pickle.load(f)
-print(new_data11.adv_data.shape)
+f = open(utfile,'wb')
+pickle.dump(new_ut,f)
 f.close
+
