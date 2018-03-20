@@ -98,11 +98,11 @@ adv_label = []
 ut_data = []
 ut_label = []
 
-samples = 100
-start = 0
+samples = 1001
+start = 1000
 confidence = 0
 
-filename = 'dstl_mnist100start0.pkl'
+filename = 'dstl_mnist1000start1000.pkl'
 utfile = 'ut_'+filename
 
 if __name__ == "__main__":
