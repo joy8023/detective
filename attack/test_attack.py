@@ -99,18 +99,18 @@ ut_data = []
 ut_label = []
 
 samples = 100
-start = 0
-confidence = 20
+start = 1000
+confidence = 2
 
-filename = 'c20_cifar500start0.pkl'
+filename = 'c2_100start1000.pkl'
 utfile = 'ut_'+filename
 
 if __name__ == "__main__":
     with tf.Session() as sess:
 
-#        data, model =  MNIST(), MNISTModel("models/mnist", sess)
+        data, model =  MNIST(), MNISTModel("models/mnist", sess)
 #        data, model =  MNIST(), MNISTModel("models/mnist-distilled-100", sess)
-        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
+#        data, model =  CIFAR(), CIFARModel("models/cifar", sess)
 #        data, model =  CIFAR(), CIFARModel("models/cifar-distilled-100", sess)
         
 #        evaluate(model.model, data.train_data, data.train_labels)
@@ -164,7 +164,7 @@ f = open(filename,'wb')
 pickle.dump(new_data,f)
 f.close
 
-f = open(utfile,'wb')
-pickle.dump(new_ut,f)
-f.close
+#f = open(utfile,'wb')
+#pickle.dump(new_ut,f)
+#f.close
 
