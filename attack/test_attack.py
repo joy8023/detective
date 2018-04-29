@@ -98,7 +98,7 @@ adv_label = []
 ut_data = []
 ut_label = []
 
-samples = 501
+samples = 100
 start = 0
 confidence = 20
 
