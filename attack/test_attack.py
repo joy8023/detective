@@ -100,9 +100,9 @@ ut_label = []
 
 samples = 100
 start = 0
-confidence = 6
+confidence = 2
 
-filename = 'c6_cifar100start0.pkl'
+filename = 'c2_cifar100start0.pkl'
 utfile = 'ut_'+filename
 
 if __name__ == "__main__":
